@@ -1,34 +1,44 @@
 pipeline {
     agent any
     environment {
-        ARM_SUBSCRIPTION_ID = credentials('ARM_SUBSCRIPTION_ID')
-        ARM_CLIENT_ID       = credentials('ARM_CLIENT_ID')
-        ARM_CLIENT_SECRET   = credentials('ARM_CLIENT_SECRET')
-        ARM_TENANT_ID       = credentials('ARM_TENANT_ID')
+        ARM_CLIENT_ID = credentials('AZURE_CLIENT_ID')
+        ARM_CLIENT_SECRET = credentials('AZURE_CLIENT_SECRET')
+        ARM_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+        ARM_TENANT_ID = credentials('AZURE_TENANT_ID')
     }
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['dev', 'prod'], description: 'Select Environment')
+        choice(name: 'ENV', choices: ['dev', 'prod'], description: 'Select Environment')
     }
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git 'https://github.com/athotamurali/multiplevmsbuild.git'
+                git 'https://github.com/your-repo/terraform-vm-deployment.git'
             }
         }
+
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                dir("environments/${params.ENV}") {
+                    sh 'terraform init'
+                }
             }
         }
+
         stage('Terraform Plan') {
             steps {
-                sh "terraform plan -var-file=environments/${params.ENVIRONMENT}.tfvars"
+                dir("environments/${params.ENV}") {
+                    sh 'terraform plan -out=tfplan'
+                }
             }
         }
+
         stage('Terraform Apply') {
             steps {
-                sh "terraform apply -auto-approve -var-file=environments/${params.ENVIRONMENT}.tfvars"
+                dir("environments/${params.ENV}") {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
             }
         }
     }
 }
+
