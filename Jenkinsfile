@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/terraform-azure.git'
+                git 'https://github.com/athotamurali/multiplevmsbuild.git'
             }
         }
         stage('Terraform Init') {
