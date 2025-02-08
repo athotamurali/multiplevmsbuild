@@ -1,11 +1,7 @@
-output "resource_group_name" {
-  value = module.resource_group.rg_name
+output "vm_ids" {
+  value = module.vms.vm_ids
 }
 
-output "subnet_id" {
-  value = module.network.subnet_id
-}
-
-output "vm_ips" {
-  value = module.vm.vm_ips
+output "vm_private_ips" {
+  value = module.vms.vm_private_ips
 }

@@ -1,39 +1,33 @@
 pipeline {
     agent any
-
-    parameters {
-        choice(name: 'ENV', choices: ['dev', 'staging', 'prod'], description: 'Select the environment')
-    }
-
     environment {
-        ARM_SUBSCRIPTION_ID = credentials('azure-subscription-id')
-        ARM_CLIENT_ID       = credentials('azure-client-id')
-        ARM_CLIENT_SECRET   = credentials('azure-client-secret')
-        ARM_TENANT_ID       = credentials('azure-tenant-id')
+        ARM_SUBSCRIPTION_ID = credentials('ARM_SUBSCRIPTION_ID')
+        ARM_CLIENT_ID       = credentials('ARM_CLIENT_ID')
+        ARM_CLIENT_SECRET   = credentials('ARM_CLIENT_SECRET')
+        ARM_TENANT_ID       = credentials('ARM_TENANT_ID')
     }
-
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['dev', 'prod'], description: 'Select Environment')
+    }
     stages {
         stage('Checkout') {
             steps {
                 git 'https://github.com/your-repo/terraform-azure.git'
             }
         }
-
         stage('Terraform Init') {
             steps {
                 sh 'terraform init'
             }
         }
-
         stage('Terraform Plan') {
             steps {
-                sh "terraform plan -var-file=environments/${params.ENV}.tfvars"
+                sh "terraform plan -var-file=environments/${params.ENVIRONMENT}.tfvars"
             }
         }
-
         stage('Terraform Apply') {
             steps {
-                sh "terraform apply -auto-approve -var-file=environments/${params.ENV}.tfvars"
+                sh "terraform apply -auto-approve -var-file=environments/${params.ENVIRONMENT}.tfvars"
             }
         }
     }
