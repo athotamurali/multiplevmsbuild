@@ -6,13 +6,14 @@ pipeline {
         ARM_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
         ARM_TENANT_ID = credentials('AZURE_TENANT_ID')
     }
+	
     parameters {
         choice(name: 'ENV', choices: ['dev', 'prod'], description: 'Select Environment')
     }
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/your-repo/terraform-vm-deployment.git'
+                git 'https://github.com/athotamurali/multiplevmsbuild.git'
             }
         }
 
